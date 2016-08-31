@@ -1,0 +1,21 @@
+# --
+# Copyright (C) 2001-2016 OTRS AG, http://otrs.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (AGPL). If you
+# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# --
+
+
+<div id="Footer" class="ARIARoleContentinfo">
+[% RenderBlockStart("Banner") %]
+    <a href="http://www.otrs.com/" title="[% Config("Product") %] [% Config("Version") %]" target="_blank">
+        [% Translate("Powered by") | html %] [% Config("Product") %] [% Config("Version").remove('\.0\..*') %]
+    </a>
+[% RenderBlockEnd("Banner") %]
+</div>
+
+[% InsertTemplate("FooterJS.tt") %]
+
+</body>
+</html>

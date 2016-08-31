@@ -1,0 +1,114 @@
+# --
+# Copyright (C) 2001-2016 OTRS AG, http://otrs.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (AGPL). If you
+# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# --
+
+[% RenderBlockStart("Properties") %]
+
+<form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" name="compose" id="Compose" class="Validate PreventMultipleSubmits">
+    <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+    <input type="hidden" name="Subaction" value="Store"/>
+    <input type="hidden" name="TicketID" value="[% Data.TicketID | html %]"/>
+    <input type="hidden" name="ArticleID" value="[% Data.ArticleID | html %]"/>
+    <input type="hidden" name="Expand" id="Expand" value=""/>
+    <input type="hidden" name="FormID" value="[% Data.FormID | html %]"/>
+
+    <div class="LayoutPopup ARIARoleMain">
+        <div class="Header">
+            <h1>
+[% RenderBlockStart("HeaderAgentArticleFreeText") %]
+[% Translate("Change Free Text of %s%s", Config('Article::Hook'), Data.ArticleNumber) | html %]
+[% RenderBlockEnd("HeaderAgentArticleFreeText") %]
+                 &mdash; [% Data.Title | html %]
+            </h1>
+            <p class="AsteriskExplanation">[% Translate("All fields marked with an asterisk (*) are mandatory.") | html %]</p>
+[% RenderBlockStart("ArticleBack") %]
+            <p>
+                <a class="CancelClosePopup" href="#">[% Translate("Cancel & close") | html %]</a>
+            </p>
+[% RenderBlockEnd("ArticleBack") %]
+        </div>
+        <div class="Content">
+
+[% RenderBlockStart("WidgetArticleActions") %]
+            <div class="WidgetSimple Expanded">
+                <div class="Header">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Toggle this widget") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                    </div>
+                    <h2>[% Translate("Article settings") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike FixedLabel">
+[% RenderBlockStart("Subject") %]
+                        <label class="Mandatory" for="Subject"><span class="Marker">*</span>[% Translate("Subject") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" id="Subject" name="Subject" value="[% Data.Subject | html %]" class="W75pc Validate_Required [% Data.SubjectInvalid | html %]" />
+                            <div id="SubjectError" class="TooltipErrorMessage" ><p>[% Translate("This field is required.") | html %]</p></div>
+                            <div id="SubjectServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        </div>
+                        <div class="Clear"></div>
+[% RenderBlockEnd("Subject") %]
+
+[% RenderBlockStart("Type") %]
+                        <label class="Mandatory" for="ArticleTypeID"><span class="Marker">*</span>[% Translate("Type") | html %]:</label>
+                        <div class="Field">
+                        [% Data.TypeStrg %]
+                            <div id="ArticleTypeIDError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                            <div id="ArticleTypeIDServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        </div>
+                        <div class="Clear"></div>
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+$('#foo').bind('change', function (Event) {
+    Core.AJAX.FormUpdate($('#Compose'), 'AJAXUpdate', 'ArticleTypeID', [ 'ServiceID', 'SLAID', 'NewOwnerID', 'NewResponsibleID', 'NewStateID', 'NewPriorityID' [% Data.DynamicFieldNamesStrg %] ]);
+});
+//]]></script>
+[% END %]
+[% RenderBlockEnd("Type") %]
+                    </div>
+                </div>
+[% RenderBlockEnd("WidgetArticleActions") %]
+
+[% RenderBlockStart("WidgetDynamicFields") %]
+                <div class="WidgetSimple Expanded">
+                    <div class="Header">
+                        <div class="WidgetAction Toggle">
+                            <a href="#" title="[% Translate("Toggle this widget") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                        </div>
+                        <h2>[% Translate("Dynamic Fields") | html %]</h2>
+                    </div>
+                    <div class="Content">
+                        <fieldset class="TableLike FixedLabel">
+[% RenderBlockStart("DynamicField") %]
+                            <div class="Row Row_DynamicField_[% Data.Name | html %]">
+                            [% Data.Label %]
+                                <div class="Field">
+                                [% Data.Field %]
+                                </div>
+                                <div class="Clear"></div>
+                            </div>
+[% RenderBlockEnd("DynamicField") %]
+                        </fieldset>
+                    </div>
+                </div>
+[% RenderBlockEnd("WidgetDynamicFields") %]
+
+            </div>
+            <div class="Footer">
+                <button class="CallForAction Primary" id="submitRichText" accesskey="g" title="[% Translate("Submit") | html %] (g)" type="submit" value="[% Translate("Submit") | html %]"><span><i class="fa fa-check-square-o"></i> [% Translate("Submit") | html %]</span></button>
+            </div>
+        </div>
+    </form>
+[% RenderBlockEnd("Properties") %]
+
+#Layers
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    Core.Config.Set('Localization.Delete', '[% Translate("Delete") | html %]');
+    Core.Agent.TicketAction.Init();
+//]]></script>
+[% END %]

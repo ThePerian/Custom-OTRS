@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="1.0" init="Application">
+    <ConfigItem Name="DynamicFields::ObjectType###CustomerCompany" Required="0" Valid="1">
+        <Description Translatable="1">DynamicField object registration.</Description>
+        <Group>DynamicFields</Group>
+        <SubGroup>DynamicFields::ObjectType::Registration</SubGroup>
+        <Setting>
+            <Hash>
+                <Item Key="DisplayName" Translatable="1">Customer company</Item>
+                <Item Key="Module">Kernel::System::DynamicField::ObjectType::CustomerCompany</Item>
+                <Item Key="Prio">120</Item>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+    <ConfigItem Name="Frontend::Admin::AdminCustomerCompany###DynamicField" Required="0" Valid="1">
+        <Description Translatable="1">Dynamic fields shown in the ticket overview screen of the customer interface. Possible settings: 0 = Disabled, 1 = Enabled, 2 = Enabled and required.</Description>
+        <Group>Framework</Group>
+        <SubGroup>Frontend::Admin::AdminCustomerCompany</SubGroup>
+        <Setting>
+            <Hash>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+    <ConfigItem Name="AgentCustomerInformationCenter###DynamicField" Required="0" Valid="1">
+        <Description Translatable="1">Dynamic fields shown in the customer information center. Possible settings: 0 = Disabled, 1 = Enabled, 2 = Enabled and required.</Description>
+        <Group>Framework</Group>
+        <SubGroup>Frontend::Agent::Dashboard</SubGroup>
+        <Setting>
+            <Hash>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+</otrs_config>
