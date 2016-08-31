@@ -35,16 +35,6 @@
                     <button class="Button CallForAction" accesskey="g" title="[% Translate("Save settings") | html %] (g)" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save settings") | html %]</span></button>
                 </div>
             </form>
-<!--
-            <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="Action" value="[% Env("Action") %]"/>
-                <input type="hidden" name="Subaction" value="ShowCustomerInfo"/>
-                <input type="hidden" name="CustomerID" value="[% Data.CustomerID | html %]"/>
-                <div class="Buttons NoMargin">
-                    <button class="Button CallForAction" title="[% Translate("Show customer info") | html %]" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Show customer info") | html %]</span></button>
-                </div>
-            </form>
--->
         </div>
     </div>
 

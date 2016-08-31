@@ -33,7 +33,7 @@
 
 [% RenderBlockEnd("ContentSmallCustomerCompanyInformationRow") %]
     <br/>
-    <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data">
+    <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" target="_new">
         <input type="hidden" name="Action" value="[% Env("Action") %]"/>
         <input type="hidden" name="Subaction" value="ShowCustomerInfo"/>
         <input type="hidden" name="CustomerID" value="[% Data.CustomerID | html %]"/>

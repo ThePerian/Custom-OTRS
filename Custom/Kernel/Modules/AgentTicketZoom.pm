@@ -283,7 +283,11 @@ sub Run {
     }
 
     if ( $Self->{Subaction} eq 'ShowCustomerInfo' ) {
-        my $Encoded = `python /opt/otrs/Custom/GetCustomerInfo.py '$Self->{CustomerID}'`;
+        my %Ticket = $TicketObject->TicketGet(
+            TicketID => $Self->{TicketID},
+            UserID => $Self->{UserID},
+        );
+        my $Encoded = `python /opt/otrs/Custom/GetCustomerInfo.py '$Ticket{CustomerID}'`;
         use MIME::Base64 qw(decode_base64);
         my $Content = decode_base64($Encoded);
         return $LayoutObject->Attachment(
