@@ -188,9 +188,6 @@ var/thirdparty/phantomjs
 Custom/1clk.xml
 Custom/errorClients.log
 Custom/file
-Custom/Worker.py
-Custom/Tasker.py
-Custom/UploadXML.py
-Custom/error.log
-Custom/GetCustomerInfo.py
-Custom/system_code
+Custom/errors.log
+Custom/config.json
+Custom/system_code.json
