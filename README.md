@@ -1,71 +1,50 @@
-What is OTRS?
+Что такое OTRS?
 =============
-OTRS is an Open source Ticket Request System with many features to manage
-customer telephone calls and e-mails. It is distributed under the GNU
-AFFERO General Public License (AGPL) and tested on Linux, Solaris, AIX,
-FreeBSD, OpenBSD and Mac OS 10.x. Do you receive many e-mails and
-want to answer them with a team of agents? You're going to love OTRS!
+OTRS это Open source Ticket Request System со множеством возможностей для управления
+обращениями клиентов по телефону и e-mail. OTRS распространяется по лицензии GNU
+AFFERO General Public License (AGPL) и протестирована на Linux, Solaris, AIX,
+FreeBSD, OpenBSD и Mac OS 10.x.
 
-You can find a list of features in the
-[online documentation](http://otrs.github.io/doc/manual/admin/6.0/en/html/otrs.html#features-of-otrs).
+Полный список возможностей можно найти в 
+[онлайн руководстве](http://otrs.github.io/doc/manual/admin/6.0/en/html/otrs.html#features-of-otrs).
 
+Данный проект - модификация OTRS для применения в РИЦ Информ-Групп
 
-License
+Лицензия
 =======
-It is distributed under the AFFERO GNU General Public License - see the
-accompanying [COPYING](COPYING) file for more details.
+Оригинальная OTRS распространяется по лицензии AFFERO GNU General Public License - смотри
+прилагающийся файл [COPYING](COPYING).
 
-
-Documentation
+Документация
 =============
-You can find quick documentation in README.* and the long version
-[online](http://otrs.github.io/doc/). The source code of OTRS and its public extension
-modules is available on [github](http://otrs.github.io).
+Краткая документация может быть найдена в README.* и полная версия
+[онлайн](http://otrs.github.io/doc/). Исходный код OTRS и его публичные расширения
+доступны на [github](http://otrs.github.io).
 
-
-Professional Services
-=====================
-
-Whether you need help in configuring or customizing OTRS or you want to be on the safe side,
-don't hesitate to contact us: We offer a wide range of professional services such as
-world-wide enterprise support, consulting and engineering including process design,
-implementation, customization, application support, and fully managed service.
-
-Our [Service Contracts](http://www.otrs.com/en/solutions/service-contracts/) guarantee instant help
-and professional support as well as support assessment and last but not least free access to
-[OTRS Feature Add-ons](http://www.otrs.com/en/solutions/subscriptions/otrsfeatureadd-ons/) -
-useful additional features for your OTRS.
-
-The [OTRS Group](http://www.otrs.com/) offers specific
-[training programs](http://www.otrs.com/en/solutions/training/) in different countries.
-You can either participate in one of our public OTRS Administrator trainings which take place regularly,
-or benefit from an inhouse training that covers all the specific needs of your company.
-
-
-Software requirements
+Технические требования
 =====================
 Perl
-- Perl 5.10.0 or higher
+- Perl 5.10.0 или выше
 
-Webserver
-- Webserver with CGI support (CGI is not recommended)
-- Apache2 + mod_perl2 or higher (recommended)
+Вебсервер
+- Вебсервер с поддержкой CGI (CGI не рекомендуется)
+- Apache2 + mod_perl2 или выше (рекомендуется)
 
-Databases
-- MySQL 5.0 or higher
+Базы данных
+- MySQL 5.0 или выше
 - MariaDB
-- PostgreSQL 8.4 or higher
-- Oracle 10g or higher
+- PostgreSQL 8.4 или выше
+- Oracle 10g или выше
 
-Browsers
-- Use a modern web browser.
-- These browsers are not supported:
-  - Internet Explorer before version 10
-  - Firefox before version 10
-  - Safari before version 5
+Браузер
+- Используйте современный браузер.
+- Следующие браузеры не поддерживаются:
+  - Internet Explorer до версии 10
+  - Firefox до версии 10
+  - Safari до версии 5
 
 
-Directories & Files
+Директории и файлы
 ===================
     $HOME (e. g. /opt/otrs/)
     |

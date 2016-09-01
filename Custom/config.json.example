@@ -1,0 +1,14 @@
+{
+"server_addr_main" : "some_ip_or_url_for_1C:Torgovlya",
+"server_addr_hotline" : "some_ip_or_url_for_1C:Hotline",
+"service_action_main" : "webservice_action",
+"service_action_hotline" : "webservice_action",
+"authorization_main" : "authorization_header_for_http_request",
+"authorization_hotline" : "authorization_header_for_http_request",
+"error_clients" : "log_file_for_UploadXML",
+"system_code" : "file_with_system_codes",
+"url_client" : "otrs_generic_interface_client_operations_address_with_login_and_password_as_parameters",
+"url_user" : "same_but_for_user_operations",
+"errors" : "another_log_file_for_UploadXML",
+"1clk" : "client_info_from_1C"
+}
