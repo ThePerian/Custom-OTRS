@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 import pika
-import time
 import httplib
 import os
 import json
+from suds.client import Client
+import sys
+
+#z0mg haxx!
+#sadly the only way to make suds send cyrillic
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 configPath = os.path.dirname(__file__)
 if not configPath.endswith("/") and configPath <> "":
@@ -21,33 +27,10 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
     print(" [x] Received %r\n [x] Sending request" % body)
-    server_addr = config["server_addr_hotline"]
-    service_action = config["service_action_hotline"]
+    client = Client(config["wsdl_hotline"], username=config["login_hotline"], password=config["password_hotline"])
+    response = client.service.TicketCreate(TicketJSON=body)
 
-    body = """
-        <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ctod="http://localhost/1CTOdev">
-        <soap:Header/>
-        <soap:Body>
-        <ctod:TicketCreate>
-        <ctod:TicketJSON>
-        """ + body + """
-        </ctod:TicketJSON>
-        </ctod:TicketCreate>
-        </soap:Body>
-        </soap:Envelope>"""
-
-    request = httplib.HTTPConnection(server_addr)
-    request.putrequest("POST", service_action)
-    request.putheader("Accept", "application/soap+xml, application/dime, multipart/related, text/*")
-    request.putheader("Content-Type", "text/xml; charset=utf-8")
-    request.putheader("SOAPAction", 'http://' + server_addr + service_action)
-    request.putheader("Content-Length", str(len(body)))
-    request.putheader("Authorization", config["authorization_main"])
-    request.endheaders()
-    request.send(body)
-    response = request.getresponse().read()
-
-    print(" [x] Got response: %r" % response) #time.sleep(body.count(b'.'))
+    print(" [x] Got response: %r" % response)
     print(" [x] Done")
     ch.basic_ack(delivery_tag = method.delivery_tag)
 

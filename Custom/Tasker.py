@@ -8,12 +8,12 @@ channel = connection.channel()
 
 channel.queue_declare(queue='task_queue', durable=True)
 
-message = sys.argv[1]#' '.join(sys.argv[1:]) or "Hello World!"
+message = sys.argv[1]
 channel.basic_publish(exchange='',
                       routing_key='task_queue',
                       body=message,
                       properties=pika.BasicProperties(
-                         delivery_mode = 2, # make message persistent
+                         delivery_mode = 2,
                       ))
 print(" [x] Sent %r" % message)
 connection.close()
