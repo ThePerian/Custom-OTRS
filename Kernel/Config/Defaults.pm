@@ -1413,6 +1413,7 @@ via the Preferences button after logging in.
 #            User => '',
 #            Password => '',
             Table => 'customer_user',
+            CustomerCompanyTable => 'customer_company',
 #            ForeignDB => 0,    # set this to 1 if your table does not have create_time, create_by, change_time and change_by fields
 
             # CaseSensitive will control if the SQL statements need LOWER()
@@ -1433,7 +1434,7 @@ via the Preferences button after logging in.
         CustomerUserListFields => [ 'first_name', 'last_name', 'email' ],
 
 #        CustomerUserListFields => ['login', 'first_name', 'last_name', 'customer_id', 'email'],
-        CustomerUserSearchFields           => [ 'login', 'first_name', 'last_name', 'customer_id' ],
+        CustomerUserSearchFields           => [ 'login', 'first_name', 'last_name', 'customer_user.customer_id', 'email', 'customer_company.name' ],
         CustomerUserSearchPrefix           => '*',
         CustomerUserSearchSuffix           => '*',
         CustomerUserSearchListLimit        => 250,
