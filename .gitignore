@@ -191,3 +191,5 @@ Custom/file
 Custom/errors.log
 Custom/config.json
 Custom/system_code.json
+Custom/error.log
+Custom/errorID.log

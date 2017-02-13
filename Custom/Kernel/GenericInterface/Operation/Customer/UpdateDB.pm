@@ -222,23 +222,23 @@ sub _UpdateDB {
             
             for my $Param ( @{$Object->{decode('UTF-8', 'Свойство')}} ) {
                 if ($Param->{decode('UTF-8', 'Имя')} eq 'id') {
-                    $CustomerCompanyData{CustomerCompanyID} = $Param->{decode('UTF-8', 'Значение')};
+                    $CustomerCompanyData{CustomerCompanyID} = $Param->{decode('UTF-8', 'Значение')}[0];
                     $CustomerCompanyData{CustomerID} = $CustomerCompanyData{CustomerCompanyID};
                 }
                 elsif ($Param->{decode('UTF-8', 'Имя')} eq 'name') {
-                    $CustomerCompanyData{CustomerCompanyName} = $Param->{decode('UTF-8', 'Значение')};
+                    $CustomerCompanyData{CustomerCompanyName} = $Param->{decode('UTF-8', 'Значение')}[0];
                 }
                 elsif ($Param->{decode('UTF-8', 'Имя')} eq 'title') {
-                    $CustomerCompanyData{DynamicFields}{CustomerCompanyFullName} = $Param->{decode('UTF-8', 'Значение')};
+                    $CustomerCompanyData{DynamicFields}{CustomerCompanyFullName} = $Param->{decode('UTF-8', 'Значение')}[0];
                 }
                 elsif ($Param->{decode('UTF-8', 'Имя')} eq 'inn') {
-                    $CustomerCompanyData{DynamicFields}{CustomerCompanyINN} = $Param->{decode('UTF-8', 'Значение')};
+                    $CustomerCompanyData{DynamicFields}{CustomerCompanyINN} = $Param->{decode('UTF-8', 'Значение')}[0];
                 }
                 elsif ($Param->{decode('UTF-8', 'Имя')} eq 'verbose_title') {
-                    $CustomerCompanyData{CustomerCompanyComment}  = $Param->{decode('UTF-8', 'Значение')};
+                    $CustomerCompanyData{CustomerCompanyComment}  = $Param->{decode('UTF-8', 'Значение')}[0];
                 }
                 elsif ($Param->{decode('UTF-8', 'Имя')} eq 'active') {
-                    if ($Param->{decode('UTF-8', 'Значение')} eq 'true') {
+                    if ($Param->{decode('UTF-8', 'Значение')}[0] eq 'true') {
                         $CustomerCompanyData{ValidID} = 1;
                     }
                     else {
@@ -286,10 +286,10 @@ sub _UpdateDB {
                         my $Distr;
                         for my $Param ( @{$System->{decode('UTF-8', 'Свойство')}} ) {
                             if ($Param->{decode('UTF-8', 'Имя')} eq 'abbr') {
-                                $Abbr = $Param->{decode('UTF-8', 'Значение')};
+                                $Abbr = $Param->{decode('UTF-8', 'Значение')}[0];
                             }
                             elsif ($Param->{decode('UTF-8', 'Имя')} eq 'distr') {
-                                $Distr = $Param->{decode('UTF-8', 'Значение')};
+                                $Distr = $Param->{decode('UTF-8', 'Значение')}[0];
                             }
                         }
                         $Distr = sprintf "%s_%06s", $Abbr, $Distr;
@@ -340,7 +340,7 @@ sub _UpdateDB {
                         $CustomerUserData{ValidID} = 1;
                         for my $Param ( @{$Employees[$i]->{decode('UTF-8', 'Свойство')}} ) {
                             if ($Param->{decode('UTF-8', 'Имя')} eq 'name') {
-                                $CustomerUserData{UserLogin} = $Param->{decode('UTF-8', 'Значение')};
+                                $CustomerUserData{UserLogin} = $Param->{decode('UTF-8', 'Значение')}[0];
                                 $CustomerUserData{ID} = $CustomerUserData{UserLogin};
                                 my @UserName = split( ' ', $CustomerUserData{UserLogin} );
                                 $CustomerUserData{UserLastname} = $UserName[0];
@@ -349,16 +349,17 @@ sub _UpdateDB {
                                 }
                             }
                             elsif ($Param->{decode('UTF-8', 'Имя')} eq 'email') {
-                                my $Email = $Param->{decode('UTF-8', 'Значение')} || '';
-                                if ( $Email =~ m/[^@]+@[^@]+\.[^@]+$/ ) {
+                                my $Email = $Param->{decode('UTF-8', 'Значение')}[0] || '';
+                                if ( $Email =~ /[^@]+@[^@]+\.[^@]+$/ ) {
                                     $CustomerUserData{UserEmail} = $Email;
-                                }
-                                else {
-                                    $CustomerUserData{UserEmail} = $CustomerUserData{UserLastname} . '-' . $i . '-' . $CustomerCompanyData{CustomerID} . '@noemail.ru';
                                 }
                             }
                         }
-                       
+
+                        if ( !$CustomerUserData{UserEmail} ) {
+                            $CustomerUserData{UserEmail} = $CustomerUserData{UserLastname} . '-' . $i . '-' . $CustomerCompanyData{CustomerID} . '@noemail.ru';
+                        }
+
                         # remove leading and trailing spaces
                         for my $Attribute ( sort keys %CustomerUserData ) {
                             if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
