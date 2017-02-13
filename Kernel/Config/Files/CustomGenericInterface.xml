@@ -129,4 +129,53 @@
             </Hash>
         </Setting>
     </ConfigItem>
+    
+    <ConfigItem Name="GenericInterface::Operation::Module###Customer::UpdateDB" Required="0" Valid="1">
+        <Description Translatable="1">GenericInterface module registration for the operation layer.</Description>
+        <Group>GenericInterface</Group>
+        <SubGroup>GenericInterface::Operation::ModuleRegistration</SubGroup>
+        <Setting>
+            <Hash>
+                <Item Key="Name">UpdateDB</Item>
+                <Item Key="Controller">Customer</Item>
+                <Item Key="ConfigDialog">AdminGenericInterfaceOperationDefault</Item>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+    
+    <ConfigItem Name="GenericInterface::Operation::UpdateDB###SystemCodesLocation" Required="0" Valid="1">
+        <Description Translatable="1">Location of file containing system codes.</Description>
+        <Group>GenericInterface</Group>
+        <SubGroup>GenericInterface::Operation::UpdateDB</SubGroup>
+        <Setting>
+            <String>/opt/otrs/Custom/system_code.json</String>
+        </Setting>
+    </ConfigItem>
+    
+    <ConfigItem Name="GenericInterface::Operation::UpdateDB###ErrorLogLocation" Required="0" Valid="1">
+        <Description Translatable="1">Location of error log.</Description>
+        <Group>GenericInterface</Group>
+        <SubGroup>GenericInterface::Operation::UpdateDB</SubGroup>
+        <Setting>
+            <String>/opt/otrs/Custom/error.log</String>
+        </Setting>
+    </ConfigItem>
+    
+    <ConfigItem Name="GenericInterface::Operation::UpdateDB###ErrorIDLocation" Required="0" Valid="1">
+        <Description Translatable="1">Location of file containing customer IDs that failed to update.</Description>
+        <Group>GenericInterface</Group>
+        <SubGroup>GenericInterface::Operation::UpdateDB</SubGroup>
+        <Setting>
+            <String>/opt/otrs/Custom/errorID.log</String>
+        </Setting>
+    </ConfigItem>
+    
+    <ConfigItem Name="GenericInterface::Operation::UpdateDB###DistrStorage" Required="0" Valid="1">
+        <Description Translatable="1">Command that must be used to add customer systems to key-value type storage. Use $1 to mark first parameter and $2 to mark second.</Description>
+        <Group>GenericInterface</Group>
+        <SubGroup>GenericInterface::Operation::UpdateDB</SubGroup>
+        <Setting>
+            <String>redis set $1 $2</String>
+        </Setting>
+    </ConfigItem>
 </otrs_config>
