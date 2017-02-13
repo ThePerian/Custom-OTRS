@@ -330,23 +330,22 @@ sub _UpdateDB {
                 
                 if ($Table->{decode('UTF-8', 'Имя')} eq 'Client_Employees') {
             
-                    my @Employees = @{$Table->{decode('UTF-8', 'Запись')}};
+                    my $Employees = $Table->{decode('UTF-8', 'Запись')};
+                    my $i = 0;
                     
-                    for my $i ( 0..$#Employees ) {
+                    for my $Employee ( @{$Employees} ) {
                         my %CustomerUserData;
                         
                         $CustomerUserData{Source} = 'CustomerUser';
                         $CustomerUserData{UserCustomerID} = $CustomerCompanyData{CustomerID};
                         $CustomerUserData{ValidID} = 1;
-                        for my $Param ( @{$Employees[$i]->{decode('UTF-8', 'Свойство')}} ) {
+                        for my $Param ( @{$Employee->{decode('UTF-8', 'Свойство')}} ) {
                             if ($Param->{decode('UTF-8', 'Имя')} eq 'name') {
                                 $CustomerUserData{UserLogin} = $Param->{decode('UTF-8', 'Значение')}[0];
                                 $CustomerUserData{ID} = $CustomerUserData{UserLogin};
                                 my @UserName = split( ' ', $CustomerUserData{UserLogin} );
                                 $CustomerUserData{UserLastname} = $UserName[0];
-                                for my $j (1..$#UserName) {
-                                    $CustomerUserData{UserFirstname} .= $UserName[$j] . ' ';
-                                }
+                                $CustomerUserData{UserFirstname} = join(' ', @UserName[1..$#UserName]) || '-';
                             }
                             elsif ($Param->{decode('UTF-8', 'Имя')} eq 'email') {
                                 my $Email = $Param->{decode('UTF-8', 'Значение')}[0] || '';
@@ -356,9 +355,7 @@ sub _UpdateDB {
                             }
                         }
 
-                        if ( !$CustomerUserData{UserEmail} ) {
-                            $CustomerUserData{UserEmail} = $CustomerUserData{UserLastname} . '-' . $i . '-' . $CustomerCompanyData{CustomerID} . '@noemail.ru';
-                        }
+                        $CustomerUserData{UserEmail} ||= $CustomerUserData{UserLastname} . '-' . $i++ . '-' . $CustomerCompanyData{CustomerID} . '@noemail.ru';
 
                         # remove leading and trailing spaces
                         for my $Attribute ( sort keys %CustomerUserData ) {
