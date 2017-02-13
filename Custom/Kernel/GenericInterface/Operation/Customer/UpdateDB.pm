@@ -213,29 +213,38 @@ sub _UpdateDB {
     unlink $Self->{Config}->{'ErrorIDLocation'};
     open my $ErrorID, '>>', $Self->{Config}->{'ErrorIDLocation'};
 
-    print $ErrorLog "Started reading\n";
-
-    my $XMLData = XMLin( $XML, KeyAttr => [ decode('UTF-8', 'Имя') ]);
-    
-    print $ErrorLog Dumper $XMLData;
-    
-    print $ErrorLog "Done reading\n";
+    my $XMLData = XMLin( $XML, KeyAttr => [], ForceArray => 1);
     
     for my $Object ( @{$XMLData->{decode('UTF-8', 'Объект')}} ) {
         if ($Object->{decode('UTF-8', 'ИмяПравила')} eq "Clients") {
+            
             my %CustomerCompanyData;
             
-            $CustomerCompanyData{CustomerCompanyID} = $Object->{decode('UTF-8', 'Свойство')}->{id}->{decode('UTF-8', 'Значение')};
-            $CustomerCompanyData{CustomerID} = $CustomerCompanyData{CustomerCompanyID};
-            $CustomerCompanyData{CustomerCompanyName} = $Object->{decode('UTF-8', 'Свойство')}->{name}->{decode('UTF-8', 'Значение')};
-            $CustomerCompanyData{DynamicFields}{CustomerCompanyFullName} = $Object->{decode('UTF-8', 'Свойство')}->{title}->{decode('UTF-8', 'Значение')};
-            $CustomerCompanyData{DynamicFields}{CustomerCompanyINN} = $Object->{decode('UTF-8', 'Свойство')}->{inn}->{decode('UTF-8', 'Значение')};
-            $CustomerCompanyData{CustomerCompanyComment} = $Object->{decode('UTF-8', 'Свойство')}->{verbose_title}->{decode('UTF-8', 'Значение')};
-            if ($Object->{decode('UTF-8', 'Свойство')}->{active}->{decode('UTF-8', 'Значение')} eq "true") {
-                $CustomerCompanyData{ValidID} = 1;
-            }
-            else {
-                $CustomerCompanyData{ValidID} = 0;
+            for my $Param ( @{$Object->{decode('UTF-8', 'Свойство')}} ) {
+                if ($Param->{decode('UTF-8', 'Имя')} eq 'id') {
+                    $CustomerCompanyData{CustomerCompanyID} = $Param->{decode('UTF-8', 'Значение')};
+                    $CustomerCompanyData{CustomerID} = $CustomerCompanyData{CustomerCompanyID};
+                }
+                elsif ($Param->{decode('UTF-8', 'Имя')} eq 'name') {
+                    $CustomerCompanyData{CustomerCompanyName} = $Param->{decode('UTF-8', 'Значение')};
+                }
+                elsif ($Param->{decode('UTF-8', 'Имя')} eq 'title') {
+                    $CustomerCompanyData{DynamicFields}{CustomerCompanyFullName} = $Param->{decode('UTF-8', 'Значение')};
+                }
+                elsif ($Param->{decode('UTF-8', 'Имя')} eq 'inn') {
+                    $CustomerCompanyData{DynamicFields}{CustomerCompanyINN} = $Param->{decode('UTF-8', 'Значение')};
+                }
+                elsif ($Param->{decode('UTF-8', 'Имя')} eq 'verbose_title') {
+                    $CustomerCompanyData{CustomerCompanyComment}  = $Param->{decode('UTF-8', 'Значение')};
+                }
+                elsif ($Param->{decode('UTF-8', 'Имя')} eq 'active') {
+                    if ($Param->{decode('UTF-8', 'Значение')} eq 'true') {
+                        $CustomerCompanyData{ValidID} = 1;
+                    }
+                    else {
+                        $CustomerCompanyData{ValidID} = 0;
+                    }
+                }
             }
            
             # check if CustomerCompany hash has needed parameters
@@ -268,94 +277,115 @@ sub _UpdateDB {
                 }
             }
             
-            my %CustomerSystems;
+            for my $Table ( @{$Object->{decode('UTF-8', 'ТабличнаяЧасть')}} ) {
+                if ($Table->{decode('UTF-8', 'Имя')} eq 'systems') {
+                    my %CustomerSystems;
 
-            for my $System ( @{$Object->{decode('UTF-8', 'ТабличнаяЧасть')}->{systems}->{decode('UTF-8', 'Запись')}} ) {
-                my $Abbr = $System->{decode('UTF-8', 'Свойство')}->{abbr}->{decode('UTF-8', 'Значение')};
-                my $Distr = sprintf "%s_%06s", $Abbr, $System->{decode('UTF-8', 'Свойство')}->{distr}->{decode('UTF-8', 'Значение')};
+                    for my $System ( @{$Table->{decode('UTF-8', 'Запись')}} ) {
+                        my $Abbr;
+                        my $Distr;
+                        for my $Param ( @{$System->{decode('UTF-8', 'Свойство')}} ) {
+                            if ($Param->{decode('UTF-8', 'Имя')} eq 'abbr') {
+                                $Abbr = $Param->{decode('UTF-8', 'Значение')};
+                            }
+                            elsif ($Param->{decode('UTF-8', 'Имя')} eq 'distr') {
+                                $Distr = $Param->{decode('UTF-8', 'Значение')};
+                            }
+                        }
+                        $Distr = sprintf "%s_%06s", $Abbr, $Distr;
+                            
+                        $CustomerSystems{$Abbr} = $Distr;
+                        my $DistrStorage = $Self->{Config}->{'DistrStorage'};
+                        
+                        $DistrStorage =~ s/\$1/$Distr/;
+                        $DistrStorage =~ s/\$2/$CustomerCompanyData{CustomerID}/;
                 
-                $CustomerSystems{$Abbr} = $Distr;
-                my $DistrStorage = $Self->{Config}->{'DistrStorage'};
-                
-                $DistrStorage =~ s/\$1/$Distr/;
-                $DistrStorage =~ s/\$2/$CustomerCompanyData{CustomerID}/;
-=redis                
-                my $Result = `$DistrStorage`;
-                if (!$Result) {
-                    my $ErrorString =  "$CustomerCompanyData{CustomerID} : ERROR : Could not save to key-value storage\n";
-                    print $ErrorLog $ErrorString;
-                    print $ErrorID $CustomerCompanyData{CustomerID} . "\n";
-                    print $ErrorString;
-                }
-=cut
-            }
+                        my $Result = `$DistrStorage`;
+                        if (!$Result) {
+                            my $ErrorString =  "$CustomerCompanyData{CustomerID} : ERROR : Could not save to key-value storage\n";
+                            print $ErrorLog $ErrorString;
+                            print $ErrorID $CustomerCompanyData{CustomerID} . "\n";
+                            print $ErrorString;
+                        }
+                    }
             
-            my @CustomerSystemsAbbr = keys %CustomerSystems;
-            $CustomerCompanyData{DynamicFields}{MaintainedBases} = \@CustomerSystemsAbbr;
+                    my @CustomerSystemsAbbr = keys %CustomerSystems;
+                    $CustomerCompanyData{DynamicFields}{MaintainedBases} = \@CustomerSystemsAbbr;
 
-            my $Result = $Self->_CustomerCompanyUpsert(
-                CustomerCompany  => \%CustomerCompanyData,
-                UserID           => $Param{UserID},
-            );
-            
-            if ($Result->{Success}) {
-                print "$CustomerCompanyData{CustomerID} : DONE\n";
-            }
-            else {
-                my $ErrorString =  "$CustomerCompanyData{CustomerID} : ERROR : $Result->{ErrorMessage}\n";
-                print $ErrorLog $ErrorString;
-                print $ErrorID $CustomerCompanyData{CustomerID} . "\n";
-                print $ErrorString;
-            }
-            
-            my @Employees = @{$Object->{decode('UTF-8', 'ТабличнаяЧасть')}->{Client_Employees}->{decode('UTF-8', 'Запись')}};
-            
-            for my $i ( 0..$#Employees ) {
-                my %CustomerUserData;
-                
-                $CustomerUserData{Source} = 'CustomerUser';
-                $CustomerUserData{UserLogin} = $Employees[$i]->{decode('UTF-8', 'Свойство')}->{decode('UTF-8', 'Значение')} || $Employees[$i]->{decode('UTF-8', 'Свойство')}->{name}->{decode('UTF-8', 'Значение')};
-                $CustomerUserData{ID} = $CustomerUserData{UserLogin};
-                my @UserName = split ' ', $CustomerUserData{UserLogin};
-                $CustomerUserData{UserLastname} = $UserName[0];
-                for my $i (1..$#UserName) {
-                    $CustomerUserData{UserFirstname} .= $UserName[$i] . ' ';
-                }
-                $CustomerUserData{UserCustomerID} = $CustomerCompanyData{CustomerID};
-                my $Email = $Employees[$i]->{decode('UTF-8', 'Свойство')}->{email}->{decode('UTF-8', 'Значение')} || '';
-                if ( $Email =~ m/[^@]+@[^@]+\.[^@]+$/ ) {
-                    $CustomerUserData{UserEmail} = $Email;
-                }
-                else {
-                    $CustomerUserData{UserEmail} = $UserName[0] . '-' . $i . '-' . $CustomerCompanyData{CustomerID} . '@noemail.ru';
-                }
-                $CustomerUserData{ValidID} = 1;
-                
-                # remove leading and trailing spaces
-                for my $Attribute ( sort keys %CustomerUserData ) {
-                    if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
-
-                        #remove leading spaces
-                        $CustomerUserData{$Attribute} =~ s{\A\s+}{};
-
-                        #remove trailing spaces
-                        $CustomerUserData{$Attribute} =~ s{\s+\z}{};
+                    my $Result = $Self->_CustomerCompanyUpsert(
+                        CustomerCompany  => \%CustomerCompanyData,
+                        UserID           => $Param{UserID},
+                    );
+                    
+                    if ($Result->{Success}) {
+                        print "$CustomerCompanyData{CustomerID} : DONE\n";
+                    }
+                    else {
+                        my $ErrorString =  "$CustomerCompanyData{CustomerID} : ERROR : $Result->{ErrorMessage}\n";
+                        print $ErrorLog $ErrorString;
+                        print $ErrorID $CustomerCompanyData{CustomerID} . "\n";
+                        print $ErrorString;
                     }
                 }
                 
-                my $Result = $Self->_CustomerUserUpsert(
-                    CustomerUser  => \%CustomerUserData,
-                    UserID           => $Param{UserID},
-                );
+                if ($Table->{decode('UTF-8', 'Имя')} eq 'Client_Employees') {
             
-                if ($Result->{Success}) {
-                    print "$CustomerCompanyData{CustomerID}-$CustomerUserData{UserLogin} : DONE\n";
-                }
-                else {
-                    my $ErrorString =  "$CustomerCompanyData{CustomerID}-$CustomerUserData{UserLogin} : ERROR : $Result->{ErrorMessage}\n";
-                    print $ErrorLog $ErrorString;
-                    print $ErrorID $CustomerCompanyData{CustomerID} . "\n";
-                    print $ErrorString;
+                    my @Employees = @{$Table->{decode('UTF-8', 'Запись')}};
+                    
+                    for my $i ( 0..$#Employees ) {
+                        my %CustomerUserData;
+                        
+                        $CustomerUserData{Source} = 'CustomerUser';
+                        $CustomerUserData{UserCustomerID} = $CustomerCompanyData{CustomerID};
+                        $CustomerUserData{ValidID} = 1;
+                        for my $Param ( @{$Employees[$i]->{decode('UTF-8', 'Свойство')}} ) {
+                            if ($Param->{decode('UTF-8', 'Имя')} eq 'name') {
+                                $CustomerUserData{UserLogin} = $Param->{decode('UTF-8', 'Значение')};
+                                $CustomerUserData{ID} = $CustomerUserData{UserLogin};
+                                my @UserName = split( ' ', $CustomerUserData{UserLogin} );
+                                $CustomerUserData{UserLastname} = $UserName[0];
+                                for my $j (1..$#UserName) {
+                                    $CustomerUserData{UserFirstname} .= $UserName[$j] . ' ';
+                                }
+                            }
+                            elsif ($Param->{decode('UTF-8', 'Имя')} eq 'email') {
+                                my $Email = $Param->{decode('UTF-8', 'Значение')} || '';
+                                if ( $Email =~ m/[^@]+@[^@]+\.[^@]+$/ ) {
+                                    $CustomerUserData{UserEmail} = $Email;
+                                }
+                                else {
+                                    $CustomerUserData{UserEmail} = $CustomerUserData{UserLastname} . '-' . $i . '-' . $CustomerCompanyData{CustomerID} . '@noemail.ru';
+                                }
+                            }
+                        }
+                       
+                        # remove leading and trailing spaces
+                        for my $Attribute ( sort keys %CustomerUserData ) {
+                            if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
+
+                                #remove leading spaces
+                                $CustomerUserData{$Attribute} =~ s{\A\s+}{};
+
+                                #remove trailing spaces
+                                $CustomerUserData{$Attribute} =~ s{\s+\z}{};
+                            }
+                        }
+                        
+                        my $Result = $Self->_CustomerUserUpsert(
+                            CustomerUser  => \%CustomerUserData,
+                            UserID           => $Param{UserID},
+                        );
+                    
+                        if ($Result->{Success}) {
+                            print "$CustomerCompanyData{CustomerID}-$CustomerUserData{UserLogin} : DONE\n";
+                        }
+                        else {
+                            my $ErrorString =  "$CustomerCompanyData{CustomerID}-$CustomerUserData{UserLogin} : ERROR : $Result->{ErrorMessage}\n";
+                            print $ErrorLog $ErrorString;
+                            print $ErrorID $CustomerCompanyData{CustomerID} . "\n";
+                            print $ErrorString;
+                        }
+                    }
                 }
             }
         }
