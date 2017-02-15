@@ -2537,13 +2537,6 @@ sub _GetFieldsToUpdate {
 sub _GetReplyBody {
     my ($Self, %Param) = @_;
     
-    use Data::Dumper;
-    my $fp = '/opt/otrs/Custom/file';
-    unlink $fp;
-    open my $fh, '>>', $fp;
-    print $fh Dumper \%Param;
-    close $fh;
-    
     my $ReplyBody = $Param{Body};
     
     # $ReplyBody is an html doc, we need to extract only body
