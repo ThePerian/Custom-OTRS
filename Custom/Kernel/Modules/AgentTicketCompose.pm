@@ -1507,10 +1507,27 @@ sub Run {
             );
         }
         
+        # get template
+        my $TemplateGenerator = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
+        
+        # get salutation
+        $GetParam{Salutation} = $TemplateGenerator->Salutation(
+            TicketID => $Self->{TicketID},
+            Data     => \%GetParam,
+            UserID   => $Self->{UserID},
+        );
+
+        # get signature
+        $GetParam{Signature} = $TemplateGenerator->Signature(
+            TicketID => $Self->{TicketID},
+            Data     => \%GetParam,
+            UserID   => $Self->{UserID},
+        );
+        
         my $ReplyBody = $Self->_GetReplyBody(
             ArticleTypeID => $ArticleTypeID,
-            Body => $GetParam{Body},
             %DynamicFieldValues,
+            %GetParam,
             );
         
         return $LayoutObject->Attachment(
@@ -2520,6 +2537,13 @@ sub _GetFieldsToUpdate {
 sub _GetReplyBody {
     my ($Self, %Param) = @_;
     
+    use Data::Dumper;
+    my $fp = '/opt/otrs/Custom/file';
+    unlink $fp;
+    open my $fh, '>>', $fp;
+    print $fh Dumper \%Param;
+    close $fh;
+    
     my $ReplyBody = $Param{Body};
     
     # $ReplyBody is an html doc, we need to extract only body
@@ -2549,6 +2573,7 @@ sub _GetReplyBody {
     my $SelectedDocumentsText = decode('UTF-8', 'Подборка:');
     
     $ReplyBody = <<"EOF";
+<div>$Param{Salutation}</div>
 <table style="margin: 0px auto;">
 <table border="1" cellspacing="0" cellpadding="10">
 <tbody>
@@ -2585,6 +2610,8 @@ sub _GetReplyBody {
 </tbody>
 </table>
 </table>
+<br/>
+<div>$Param{Signature}</div>
 EOF
 
     $ReplyBody = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->RichTextDocumentComplete(
