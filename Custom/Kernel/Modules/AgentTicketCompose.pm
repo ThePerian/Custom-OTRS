@@ -836,10 +836,27 @@ sub Run {
             );
         }
         
+        # get template
+        my $TemplateGenerator = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
+        
+        # get salutation
+        $GetParam{Salutation} = $TemplateGenerator->Salutation(
+            TicketID => $Self->{TicketID},
+            Data     => \%GetParam,
+            UserID   => $Self->{UserID},
+        );
+
+        # get signature
+        $GetParam{Signature} = $TemplateGenerator->Signature(
+            TicketID => $Self->{TicketID},
+            Data     => \%GetParam,
+            UserID   => $Self->{UserID},
+        );
+
         my $ReplyBody = $Self->_GetReplyBody(
             ArticleTypeID => $ArticleTypeID,
-            Body => $GetParam{Body},
             %DynamicFieldValues,
+            %GetParam,
             );
 
         # send email
