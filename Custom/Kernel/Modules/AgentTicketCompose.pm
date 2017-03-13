@@ -2571,7 +2571,7 @@ sub _GetReplyBody {
     if ( defined $Param{SelectedDocuments} ) {
         for my $item ( @{$Param{SelectedDocuments}} ) {
             while ( my( $doc, $text ) = each( %{$item} ) ) {
-                $SelectedDocuments .= "$doc : $text<\/br>";
+                $SelectedDocuments .= "$doc : $text<br\/>";
             }
         }
     }
