@@ -2597,6 +2597,9 @@ sub _GetReplyBody {
             <p>
         </td>
     </tr>
+EOF
+    if ($Rationale ne '') {
+        $ReplyBody .= <<"EOF";
     <tr>
         <td width="638" valign="top">
             <p>
@@ -2607,6 +2610,10 @@ sub _GetReplyBody {
             <p>
         </td>
     </tr>
+EOF
+    }
+    if ($SelectedDocuments ne '') {
+        $ReplyBody .= <<"EOF";
     <tr>
         <td width="638" valign="top">
             <p>
@@ -2617,6 +2624,9 @@ sub _GetReplyBody {
             <p>
         </td>
     </tr>
+EOF
+    }
+    $ReplyBody .= <<"EOF";
 </tbody>
 </table>
 </table>

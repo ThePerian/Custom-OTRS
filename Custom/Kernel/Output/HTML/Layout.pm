@@ -1399,7 +1399,7 @@ sub Header {
             UserID => $ID,
         );
         my $Count = $TicketObject->TicketSearch(
-            ResponsibleIDs => [$ID],
+            OwnerIDs => [$ID],
             StateType => 'Open',
             UserID => $Self->{UserID},
             Permission => 'ro',
@@ -1408,7 +1408,7 @@ sub Header {
         $Self->Block(
             Name => 'Tickets',
             Data => {
-                Link => "Action=AgentTicketStatusView;Filter=Open;SortBy=Age;OrderBy=Down;ColumnFilterResponsible=$ID",
+                Link => "Action=AgentTicketStatusView;Filter=Open;SortBy=Age;OrderBy=Down;ColumnFilterOwner=$ID",
                 Name => "$Name",
                 Text => "| $Name: $Count |",
             },
