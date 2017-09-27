@@ -56,6 +56,13 @@ sub Data {
         'Article settings' => 'Настройки заметки или ответа',
         'Edit free text' => 'Редактировать дополнительные поля',
         'Show preview' => 'Предварительный просмотр',
+	# Template: AAABase Custom
+	'Child' => 'Заявка-потомок',
+	'Parent' => 'Заявка-родитель',
+	# Template: LinkObject Custom
+	'Object#' => 'Номер заявки',
+	# Template: AgentTicketZoom Custom
+	'Linked Objects' => 'Связанные заявки',
 
         # Template: AAABase
         'Yes' => 'Да',
@@ -156,8 +163,6 @@ sub Data {
         'Link (Parent)' => 'Связь (родитель)',
         'Link (Child)' => 'Связь (потомок)',
         'Normal' => 'Обычная',
-        'Parent' => 'Родитель',
-        'Child' => 'Потомок',
         'Hit' => 'Соответствует',
         'Hits' => 'Соответствует',
         'Text' => 'Текст',
@@ -2807,7 +2812,6 @@ sub Data {
         'Note: Type is invalid!' => '',
         'Locked' => 'Блокировка',
         'Accounted time' => 'Потраченное на заявку время',
-        'Linked Objects' => 'Связанные объекты',
         'Change Queue' => 'Сменить очередь',
         'There are no dialogs available at this point in the process.' =>
             'Нет диалогов доступных в этой части процесса',
@@ -3114,7 +3118,6 @@ sub Data {
             'Вручную вводимые адреса электронной почты будут проверяться на MX-записи в DNS. Не используйте эту опцию, если ваш DNS-сервер медленный или не разрешает публичные адреса.',
 
         # Template: LinkObject
-        'Object#' => 'Объект#',
         'Add links' => 'Добавить связи',
         'Delete links' => 'Удалить связи',
 

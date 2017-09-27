@@ -1399,7 +1399,7 @@ sub Header {
             UserID => $ID,
         );
         my $Count = $TicketObject->TicketSearch(
-            ResponsibleIDs => [$ID],
+            OwnerIDs => [$ID],
             StateType => 'Open',
             UserID => $Self->{UserID},
             Permission => 'ro',
@@ -1408,7 +1408,7 @@ sub Header {
         $Self->Block(
             Name => 'Tickets',
             Data => {
-                Link => "Action=AgentTicketStatusView;Filter=Open;SortBy=Age;OrderBy=Down;ColumnFilterResponsible=$ID",
+                Link => "Action=AgentTicketStatusView;Filter=Open;SortBy=Age;OrderBy=Down;ColumnFilterOwner=$ID",
                 Name => "$Name",
                 Text => "| $Name: $Count |",
             },
@@ -1969,7 +1969,7 @@ sub CustomerAgeInHours {
     return $AgeStrg;
 }
 
-sub CustomerAge {
+sub CustomerAgeOld {
     my ( $Self, %Param ) = @_;
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -2009,6 +2009,27 @@ sub CustomerAge {
         $AgeStrg .= int( ( $Age / 60 ) % 60 ) . ' ';
         $AgeStrg .= $Self->{LanguageObject}->Translate($MinuteDsc);
     }
+    return $AgeStrg;
+}
+
+sub CustomerAge {
+    my ( $Self, %Param ) = @_;
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $TimeObject = $Kernel::OM->Get('Kernel::System::Time');
+
+    my $Age = defined( $Param{Age} ) ? $Param{Age} : return;
+    my $AgeStrg = '';
+
+    my ($s, $m, $h, $D, $M, $Y) = localtime($TimeObject->SystemTime() - $Age);
+    $s = sprintf("%02d", $s);
+    $m = sprintf("%02d", $m);
+    $h = sprintf("%02d", $h);
+    $D = sprintf("%02d", $D);
+    $M = sprintf("%02d", $M+1);
+    $Y = $Y+1900;
+    $AgeStrg = "$D.$M.$Y $h:$m:$s";
+
     return $AgeStrg;
 }
 
